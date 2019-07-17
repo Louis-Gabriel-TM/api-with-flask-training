@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 
 
 app = Flask(__name__)  # __name__ is the unique name of this file
@@ -39,7 +39,8 @@ def get_store(name):
 # GET /store --> get data of all stores
 @app.route('/store')
 def get_stores():
-    pass
+    return jsonify({'stores': stores})
+    # Seul un dictionnaire prut être convertir en JSON
 
 # GET /store/<string:name>/item --> get data of all items in a specific store
 @app.route('/store/<string:name>/item')
