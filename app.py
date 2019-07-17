@@ -1,7 +1,12 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 
 
 app = Flask(__name__)  # __name__ is the unique name of this file
+
+
+@app.route('/')
+def home():
+    return render_template('index.html')
 
 
 # Data blueprint
