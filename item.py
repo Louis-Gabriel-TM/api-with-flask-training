@@ -28,6 +28,28 @@ class Item(Resource):
         if row:
             return {'item': {'name': row[0], 'price': row[1]}}
 
+    @classmethod
+    def insert(cls, item):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "INSERT INTO Items VALUES (?, ?);"
+        cursor.execute(query, (item['name'], item['price']))
+
+        connection.commit()
+        connection.close()
+
+    @classmethod
+    def update(cls, item):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "UPDATE Items SET price=? WHERE name=?"
+        cursor.execute(query, (item['price'], item['name']))
+
+        connection.commit()
+        connection.close()
+
     @jwt_required()
     def get(self, name):
         item = Item.find_by_name(name)
@@ -43,35 +65,60 @@ class Item(Resource):
 
         item = {'name': name, 'price': data.get('price')}
 
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "INSERT INTO Items VALUES (?, ?);"
-        cursor.execute(query, (item['name'], item['price']))
-
-        connection.commit()
-        connection.close()
+        try:
+            self.insert(item)
+        except:
+            return {'message': "An error occured inserting the item"}, 500
 
         return item, 201
 
     def put(self, name):
-
         data = Item.parser.parse_args()
 
-        item = next(filter(lambda x: x['name'] == name, items), None)
+        item = self.find_by_name(name)
+        updated_item = {'name': name, 'price': data['price']}
+
         if item:
-            item.update(data)
+            try:
+                self.update(updated_item)
+            except:
+                return {'message': "An error occured updating the item"}, 500
         else:
-            item = {'name': name, 'price': data.get('price')}
-            items.append(item)
+            try:
+                self.insert(updated_item)
+            except:
+                return {'message': "An error occured inserting the item"}, 500
+
+        return updated_item, 201
 
     def delete(self, name):
-        global items
-        items = list(filter(lambda x: x['name'] != name, items))
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "DELETE FROM Items WHERE name=?"
+        cursor.execute(query, (name,))
+
+        connection.commit()
+        connection.close()
+
         return {'message': 'Item deleted'}
 
 
 class ItemList(Resource):
 
     def get(self):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM Items;"
+        result = cursor.execute(query)
+        items = []
+        for row in result:
+            items.append({
+                'name': row[0],
+                'price': row[1]
+            })
+
+        connection.close()
+
         return {'items': items}
