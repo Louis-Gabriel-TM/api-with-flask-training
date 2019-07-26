@@ -17,7 +17,5 @@ create_table_query = """CREATE TABLE IF NOT EXISTS Items(
 );"""
 cursor.execute(create_table_query)
 
-cursor.execute("INSERT INTO Items VALUES ('test', 10.99);")
-
 connection.commit()
 connection.close()
