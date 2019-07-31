@@ -12,6 +12,7 @@ create_table_query = """CREATE TABLE IF NOT EXISTS Users(
 cursor.execute(create_table_query)
 
 create_table_query = """CREATE TABLE IF NOT EXISTS Items(
+    id INTEGER PRIMARY KEY,
     name TEXT,
     price REAL
 );"""

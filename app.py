@@ -8,6 +8,7 @@ from security import authenticate, identity
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 # Turn off the Flask-SQLAlchemy tracker because SQLAlchemy tracker is better
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'a_secret_key_to_keep_secret...'
