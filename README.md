@@ -2,6 +2,8 @@
 
 An attempt to construct a REST API with Flask based on the **Udemy MOOC _REST APIs with Flask_**.
 
+Also using Flask-RESTful, Flask-JWT and Flask-SQLAlchemy.
+
 ### Setup on Windows
 
 In the folder of your choice, **create a virtual environment** with:
