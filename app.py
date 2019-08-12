@@ -16,11 +16,6 @@ app.secret_key = 'a_secret_key_to_keep_secret...'
 api = Api(app)
 
 
-@app.before_first_request
-def create_tables():
-    db.create_all()
-
-
 jwt = JWT(app, authenticate, identity)  # create /auth
 
 api.add_resource(Item, '/item/<string:name>')
@@ -30,7 +25,7 @@ api.add_resource(StoreList, '/stores')
 api.add_resource(UserRegister, '/register')
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # not run in prod --> run.py
     from db import db  # to avoid circular import
 
     db.init_app(app)
