@@ -14,8 +14,11 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL', 'sqlite:///data.db'
 )
-# Turn off the Flask-SQLAlchemy tracker because SQLAlchemy tracker is better
+# Turn off the Flask-SQLAlchemy tracker because SQLAlchemy tracker is better:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# To propagate Flask-JWT errors to the Flask app
+# (to have a 401 instead of a 500 for example):
+app.config['PROPAGATE_EXCEPTIONS'] = True
 app.secret_key = 'a_secret_key_to_keep_secret...'
 api = Api(app)
 
