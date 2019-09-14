@@ -12,13 +12,13 @@ class UserRegister(Resource):
         'username',
         type=str,
         required=True,
-        help="'Username' field cannot be left blank"
+        help="'Username' field cannot be left blank."
     )
     parser.add_argument(
         'password',
         type=str,
         required=True,
-        help="'Password' field cannot be left blank"
+        help="'Password' field cannot be left blank."
     )
 
     def post(self):
@@ -31,3 +31,25 @@ class UserRegister(Resource):
         user.save_to_db()
 
         return {'message': "User created succesfully."}, 201
+
+
+class User(Resource):
+
+    @classmethod
+    def get(cls, user_id):
+        user = UserModel.find_by_id(user_id)
+
+        if not user:
+            return {'message': "User not found."}, 404
+
+        return user.json()
+
+    @classmethod
+    def delete(cls, user_id):
+        user = UserModel.find_by_id(user_id)
+
+        if not user:
+            return {'message': "User not found."}, 404
+
+        user.delete_from_db()
+        return {'message': "User deleted."}, 200
