@@ -1,18 +1,18 @@
 from flask import Flask
-from flask_jwt import JWT
+from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
-from resources.user import User, UserRegister
+from resources.user import User, UserLogin, UserRegister
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
-from security import authenticate, identity
 
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True  # To see Flask JWT errors
-app.secret_key = 'My Very Secret Key'
+app.config['JWT_SECRET_KEY'] = 'A First Secret Key for JWT Tokens'
+app.secret_key = 'Another Secret Key'
 
 api = Api(app)
 
@@ -22,14 +22,15 @@ def create_tables():
     db.create_all()
 
 
-jwt = JWT(app, authenticate, identity)  # /auth
+jwt = JWTManager(app)  # don't create /auth endpoint
 
 api.add_resource(Item, '/item/<string:name>')
 api.add_resource(ItemList, '/items')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
-api.add_resource(UserRegister, '/register')
 api.add_resource(User, '/user/<int:user_id>')
+api.add_resource(UserLogin, '/login')
+api.add_resource(UserRegister, '/register')
 
 
 if __name__ == '__main__':
