@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
-from resources.user import User, UserLogin, UserRegister
+from resources.user import TokenRefresh, User, UserLogin, UserRegister
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
 
@@ -40,6 +40,7 @@ api.add_resource(StoreList, '/stores')
 api.add_resource(User, '/user/<int:user_id>')
 api.add_resource(UserLogin, '/login')
 api.add_resource(UserRegister, '/register')
+api.add_resource(TokenRefresh, '/refresh')
 
 
 if __name__ == '__main__':
