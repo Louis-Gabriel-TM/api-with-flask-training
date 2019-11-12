@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
+from blacklist import BLACKLIST
 from resources.user import TokenRefresh, User, UserLogin, UserRegister
 from resources.item import Item, ItemList
 from resources.store import Store, StoreList
@@ -11,6 +12,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True  # To see Flask JWT errors
+app.config['JWT_BLASKLIST_ENABLED'] = True
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 app.config['JWT_SECRET_KEY'] = 'A First Secret Key for JWT Tokens'
 app.secret_key = 'Another Secret Key'
 
@@ -31,6 +34,10 @@ def add_claims_to_jwt(identity):
         return {'is_admin': True}
 
     return {'is_admin': False}
+
+@jwt.token_in_blacklist_loader
+def check_if_token_in_blacklist(decrypted_token):
+    return decrypted_token['identity'] in BLACKLIST
 
 @jwt.expired_token_loader
 def expired_token_callback():
